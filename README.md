@@ -26,8 +26,16 @@ int main() {
 }
 ```
 
-#### Install
+> [!IMPORTANT]
+> You must let the `Logger` object live until all events are logged. It flushes automatically when destructed (end of scope).
+
+---
+
+## Install
 Just add `include/` to your project. No dependencies outside C++17 STL and bundled nlohmann/json.
+
+> [!CAUTION]
+> If compiling on Windows, ensure your compiler supports at least C++17. See [CI status](https://github.com/mbn-code/cLog/actions) for tested environments.
 
 ---
 
@@ -39,12 +47,42 @@ Just add `include/` to your project. No dependencies outside C++17 STL and bundl
 - Clean chainable API: `info().kv().kv()`
 - Robust: lossless, race-free, cross-platform tested
 
+> [!TIP]
+> For highest multi-threading performance, prefer the default async mode.
+
+<details>
+<summary><strong>Advanced</strong>: Add your own sink/output</summary>
+
+Implement your own sink by inheriting from `c_log::Sink`:
+
+```cpp
+struct MySink : c_log::Sink {
+    void log(const std::string& msg) override {
+        // Custom output here
+    }
+};
+```
+Then add it to the logger:
+```cpp
+log.add_sink(std::make_unique<MySink>());
+```
+</details>
+
 ---
 
 ## Issues and Contributing
 - Please [open an Issue](https://github.com/mbn-code/cLog/issues) for bugs, features, or questions!
 - Star the repo if you find it useful
 - [Contributing Guide](CONTRIBUTING.md)
+- See current and planned items below:
+
+### Project Roadmap
+- [x] Robust async log draining/thread lifecycle
+- [x] File and console sinks
+- [x] CI/test coverage (Linux/Ubuntu)
+- [ ] Easy external sink/plugin system
+- [ ] Windows, Mac CI runs
+- [ ] Clean config file support
 
 ---
 
