@@ -10,7 +10,7 @@
 > Extensible sinks, structured JSON out, robust thread lifecycle, and lossless shutdown.
 
 > [!IMPORTANT]
-> Like cLog? Please consider [starring the repo](https://github.com/mbn-code/cLog) or sharing your feedback. It really helps!
+> If you find cLog helpful, please consider [starring the repository](https://github.com/mbn-code/cLog) or sharing feedback. Community support helps drive improvement.
 
 ## Getting Started
 
@@ -34,17 +34,17 @@ int main() {
 ```
 
 > [!IMPORTANT]
-> Let the `Logger` object live until all events are logged. It flushes automatically when the object is destroyed (which happens when it goes out of scope).
+> Allow the `Logger` object to remain in scope until all events are logged. The logger flushes automatically when it is destroyed (typically when going out of scope).
 
-## Install
-Just add `include/` to your project. No dependencies except C++17 STL and the bundled nlohmann/json.
+## Installation
+Add the `include/` directory to the project's include paths. The only requirements are a compiler supporting at least C++17 and the bundled nlohmann/json. No external dependencies are needed.
 
 > [!CAUTION]
-> If you're compiling on Windows, make sure your compiler supports at least C++17. See [CI status](https://github.com/mbn-code/cLog/actions) for tested environments.
+> When compiling on Windows, ensure the compiler supports at least C++17. Consult [CI status](https://github.com/mbn-code/cLog/actions) for verified environments.
 
 ## Benchmarks
 
-The following graph shows the average time (in microseconds) to log a single entry under different modes and sinks (lower is better):
+The graph below presents the average time (in microseconds) to log a single entry under different modes and sinks (lower is better):
 
 <p align="center">
   <img src="./benchmarks/benchmark.png" alt="cLog benchmarks bar graph" width="500">
@@ -64,32 +64,32 @@ Benchmarks were performed locally on an AMD Ryzen 9 9800X3D with 32GB DDR5-6000 
 | **spdlog**   | async     | 10       | File       | 0.37              | 2,700,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
 | **spdlog**   | sync      | 10       | File       | 0.60              | 1,660,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
 
-<sub>Numbers from spdlog are for Ubuntu 64-bit, i7-4770 3.4GHz. For cLog, sync/async and file/console modes were tested with 100,000 logs per variant on a modern Linux system. “Logs/sec” is approximate, calculated as 1,000,000 / μs-per-log (higher is better).</sub>
+<sub>Numbers for spdlog are for Ubuntu 64-bit, i7-4770 3.4GHz. cLog benchmarks were run with 100,000 logs per variant on a modern Linux system. 'Logs/sec' values are approximate, calculated as 1,000,000 / μs-per-log (higher is better).</sub>
 
-**In context:**  
-- spdlog is widely recognized as one of the fastest C++ loggers, especially in minimal-formatting scenarios.
-- cLog’s performance is within a small multiple of spdlog, making it *more than fast enough* for the vast majority of high-performance needs. For many applications, sub-2μs logging throughput is essentially “free.”
-- Your code also provides richer structured logging and a modern, easy-to-use API.
+**Performance Context:**  
+- spdlog is recognized for leading performance in minimal-formatting settings.
+- cLog offers performance within a small multiple of spdlog. For most high-throughput applications, sub-2μs throughput is suitable for demanding scenarios.
+- Structured logging and a modern, expressive API are provided out of the box.
 
 ---
 
 ---
 
 ## Features
-- Async and sync modes (`Logger::Mode`)
+- Asynchronous and synchronous operation modes (`Logger::Mode`)
 - Safe, automatic background flushing and shutdown
-- Console and file sinks out of the box
-- Fully structured JSON logs
-- Clean, chainable API: `info().kv().kv()`, now with `debug()`, `warn()`, `error()` and all levels
-- Lossless, race-free, and cross-platform
+- Console and file sinks included
+- Fully structured JSON output
+- Chainable API: `info().kv().kv()` and all standard log levels (`debug()`, `warn()`, `error()`, etc.)
+- Race-free, lossless, and cross-platform operation
 
 > [!TIP]
-> For the best multithreaded performance, stick with the default async mode.
+> For optimal multi-threaded performance, asynchronous mode is recommended.
 
 <details>
-<summary><strong>Advanced</strong>: Add a custom sink/output</summary>
+<summary><strong>Advanced: Custom Sink/Output Support</strong></summary>
 
-You can write your own sink by inheriting from `c_log::Sink`:
+Custom sinks can be implemented by inheriting from `c_log::Sink`:
 
 ```cpp
 struct MySink : c_log::Sink {
@@ -98,17 +98,17 @@ struct MySink : c_log::Sink {
     }
 };
 ```
-And then add it to the logger:
+Add the custom sink to the logger:
 ```cpp
 log.add_sink(std::make_unique<MySink>());
 ```
 </details>
 
-## Issues and Contributing
-- Please [open an Issue](https://github.com/mbn-code/cLog/issues) for bugs, feature ideas, or questions!
-- Star the repo if you find it useful.
-- See the [Contributing Guide](CONTRIBUTING.md).
-- You can also check out what's next below:
+## Issues and Contributions
+- For bugs, feature suggestions, or questions, please [open an Issue](https://github.com/mbn-code/cLog/issues).
+- Star the repository if cLog is useful.
+- Contribution guidelines are available in the [Contributing Guide](CONTRIBUTING.md).
+- The project roadmap is listed below:
 
 ### Project Roadmap
 - [x] Robust async log draining and thread lifecycle
@@ -121,14 +121,15 @@ log.add_sink(std::make_unique<MySink>());
 ## License
 MIT - see [LICENSE](LICENSE)
 
-*Project status: Alpha. The API will become more stable as people try it out and give feedback.*
+*Project status: Alpha. The API will become more stable as users provide feedback and as adoption increases.*
 
-## Why cLog?
-I originally built cLog for myself. After a while, I realized other might want a modern C++ logger that's simple and just works (that's the goal, anyway! If it doesn't, please [open an issue](https://github.com/mbn-code/cLog/issues)). So, I decided to share it here. If it's useful to you, that's great. PRs and issues are always welcome!
+## About cLog
+
+cLog was originally developed as a practical structured logging solution for modern C++. The aim is to provide a robust, easy-to-use, and high-performance logger for projects requiring structured logs and safe multithreaded operation. Community feedback, issues, and contributions are welcome and greatly appreciated.
 
 <details>
 <summary><strong>Note on AI Involvement</strong></summary>
 
-This project was originally meant for personal use and not publication. Some parts were implemented with the help of an AI language model (LLM). Because of that, the design and code may not follow the same conventions as community-driven or "clean-room" open source tools. Your reviews, suggestions, issues, and contributions are especially valued—and will help shape cLog into something better for everyone.
+Some portions of this project were implemented with the aid of AI language modeling tools. As a result, some aspects of the code and design may differ from conventionally developed open source tools. User reviews, suggestions, and contributions are essential to shaping the future of cLog.
 
 </details>
