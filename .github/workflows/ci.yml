@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Install build tools
+      run: sudo apt-get update && sudo apt-get install -y g++ make
+    - name: Build and run tests
+      run: |
+        g++ -std=c++17 -pthread -Iinclude tests/async_flush.cpp -o async_flush
+        ./async_flush
+        g++ -std=c++17 -pthread -Iinclude tests/file_sink.cpp -o file_sink
+        ./file_sink
+        g++ -std=c++17 -pthread -Iinclude tests/sync_mode.cpp -o sync_mode
+        ./sync_mode
+        g++ -std=c++17 -pthread -Iinclude tests/basic.cpp -o basic
+        ./basic
