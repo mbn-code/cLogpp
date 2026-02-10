@@ -6,12 +6,11 @@
 
 **Modern C++ Structured Logging Library**
 
----
-
 > **Async by default, chainable API, no macros.**  
-> Extensible sinks, structured JSON out; robust thread lifecycle & lossless shutdown.
+> Extensible sinks, structured JSON out, robust thread lifecycle, and lossless shutdown.
 
----
+> [!IMPORTANT]
+> Like cLog? Please consider [starring the repo](https://github.com/mbn-code/cLog) or sharing your feedback. It really helps!
 
 ## Getting Started
 
@@ -27,68 +26,61 @@ int main() {
 ```
 
 > [!IMPORTANT]
-> You must let the `Logger` object live until all events are logged. It flushes automatically when destructed (end of scope).
-
----
+> Let the `Logger` object live until all events are logged. It flushes automatically when the object is destroyed (which happens when it goes out of scope).
 
 ## Install
-Just add `include/` to your project. No dependencies outside C++17 STL and bundled nlohmann/json.
+Just add `include/` to your project. No dependencies except C++17 STL and the bundled nlohmann/json.
 
 > [!CAUTION]
-> If compiling on Windows, ensure your compiler supports at least C++17. See [CI status](https://github.com/mbn-code/cLog/actions) for tested environments.
-
----
+> If you're compiling on Windows, make sure your compiler supports at least C++17. See [CI status](https://github.com/mbn-code/cLog/actions) for tested environments.
 
 ## Features
 - Async and sync modes (`Logger::Mode`)
-- Automatic background flushing/shutdown
-- Console and file sink out-of-the-box
-- Fully structured logs (JSON)
-- Clean chainable API: `info().kv().kv()`
-- Robust: lossless, race-free, cross-platform tested
+- Safe, automatic background flushing and shutdown
+- Console and file sinks out of the box
+- Fully structured JSON logs
+- Clean, chainable API: `info().kv().kv()`
+- Lossless, race-free, and cross-platform
 
 > [!TIP]
-> For highest multi-threading performance, prefer the default async mode.
+> For the best multithreaded performance, stick with the default async mode.
 
 <details>
-<summary><strong>Advanced</strong>: Add your own sink/output</summary>
+<summary><strong>Advanced</strong>: Add a custom sink/output</summary>
 
-Implement your own sink by inheriting from `c_log::Sink`:
+You can write your own sink by inheriting from `c_log::Sink`:
 
 ```cpp
 struct MySink : c_log::Sink {
     void log(const std::string& msg) override {
-        // Custom output here
+        // Custom output
     }
 };
 ```
-Then add it to the logger:
+And then add it to the logger:
 ```cpp
 log.add_sink(std::make_unique<MySink>());
 ```
 </details>
 
----
-
 ## Issues and Contributing
-- Please [open an Issue](https://github.com/mbn-code/cLog/issues) for bugs, features, or questions!
-- Star the repo if you find it useful
-- [Contributing Guide](CONTRIBUTING.md)
-- See current and planned items below:
+- Please [open an Issue](https://github.com/mbn-code/cLog/issues) for bugs, feature ideas, or questions!
+- Star the repo if you find it useful.
+- See the [Contributing Guide](CONTRIBUTING.md).
+- You can also check out what's next below:
 
 ### Project Roadmap
-- [x] Robust async log draining/thread lifecycle
+- [x] Robust async log draining and thread lifecycle
 - [x] File and console sinks
 - [x] CI/test coverage (Linux/Ubuntu)
-- [ ] Easy external sink/plugin system
-- [ ] Windows, Mac CI runs
-- [ ] Clean config file support
-
----
+- [ ] More flexible external sink/plugin system
+- [ ] Windows and Mac CI
+- [ ] Simple config file support
 
 ## License
 MIT - see [LICENSE](LICENSE)
 
----
+*Project status: Alpha. The API will become more stable as people try it out and give feedback.*
 
-*Project status: Alpha. API will stabilize with community use.*
+## Why cLog?
+I originally built cLog for myself. After a while, I realized other folks might want a modern C++ logger that's simple and just works (that's the goal, anyway! If it doesn't, please [open an issue](https://github.com/mbn-code/cLog/issues)). So, I decided to share it here. If it's useful to you, that's great. PRs and issues are always welcome!
