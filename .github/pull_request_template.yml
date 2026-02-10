@@ -1,0 +1,20 @@
+---
+name: Pull request
+about: Submit code, doc, or test improvements
+body:
+  - type: textarea
+    attributes:
+      label: Whats changed?
+      description: Link relevant Issue(s). Describe major changes and fixes.
+    validations:
+      required: true
+  - type: checkboxes
+    attributes:
+      label: Checklist
+      options:
+        - label: Code builds/tests pass
+        - label: Code is clean and commented
+        - label: I have added or updated tests
+        - label: I agree to license by MIT
+    validations:
+      required: true

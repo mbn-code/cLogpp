@@ -1,0 +1,34 @@
+name: Bug report
+about: Create a bug report to help us improve
+labels: bug
+body:
+  - type: input
+    attributes:
+      label: What happened?
+      description: Describe the bug in detail.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Steps to reproduce
+      description: Include code, platform, and reproduction steps.
+      placeholder: |
+        1. Code sample
+        2. Compile/run this way
+        3. Observe...
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Expected behavior
+      description: What should have happened?
+      placeholder: Clear statement of correct behavior...
+      validations:
+        required: true
+  - type: textarea
+    attributes:
+      label: System details
+      description: OS, compiler, and library versions
+      placeholder: Ubuntu 22.04, g++ v10, ...
+    validations:
+      required: false
