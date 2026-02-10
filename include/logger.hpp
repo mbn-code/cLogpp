@@ -65,6 +65,32 @@ public:
         cur_entry_ = Entry{event, Level::Info};
         return *this;
     }
+    Logger& debug(const std::string& event) {
+        flush_if_building();
+        cur_entry_ = Entry{event, Level::Debug};
+        return *this;
+    }
+    Logger& warning(const std::string& event) {
+        flush_if_building();
+        cur_entry_ = Entry{event, Level::Warning};
+        return *this;
+    }
+    Logger& warn(const std::string& event) { return warning(event); }
+    Logger& error(const std::string& event) {
+        flush_if_building();
+        cur_entry_ = Entry{event, Level::Error};
+        return *this;
+    }
+    Logger& trace(const std::string& event) {
+        flush_if_building();
+        cur_entry_ = Entry{event, Level::Trace};
+        return *this;
+    }
+    Logger& critical(const std::string& event) {
+        flush_if_building();
+        cur_entry_ = Entry{event, Level::Critical};
+        return *this;
+    }
     Logger& kv(const std::string& key, const std::string& val) {
         cur_entry_.fields.emplace_back(key, val);
         return *this;
