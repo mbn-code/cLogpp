@@ -84,3 +84,10 @@ MIT - see [LICENSE](LICENSE)
 
 ## Why cLog?
 I originally built cLog for myself. After a while, I realized other folks might want a modern C++ logger that's simple and just works (that's the goal, anyway! If it doesn't, please [open an issue](https://github.com/mbn-code/cLog/issues)). So, I decided to share it here. If it's useful to you, that's great. PRs and issues are always welcome!
+
+<details>
+<summary><strong>Note on AI Involvement</strong></summary>
+
+This project was originally meant for personal use and not publication. Some parts were implemented with the help of an AI language model (LLM). Because of that, the design and code may not follow the same conventions as community-driven or "clean-room" open source tools. Your reviews, suggestions, issues, and contributions are especially valued—and will help shape cLog into something better for everyone.
+
+</details>
