@@ -16,12 +16,20 @@
 
 ```cpp
 #include "include/logger.hpp"
-#include "include/file_sink.hpp"
+#include "include/logger_config.hpp"
+#include <memory>
 
 int main() {
-    c_log::Logger log;
-    log.add_sink(std::make_unique<c_log::FileSink>("log.json"));
-    log.info("startup").kv("user", "alice").kv("run", 1);
+    auto log = c_log::logger_from_config("logger.json");
+    log->info("startup").kv("user", "alice").kv("run", 1);
+}
+```
+
+// logger.json example:
+```
+{
+  "mode": "async", // "sync" or "async"
+  "level": "info"  // "trace", "debug", ...
 }
 ```
 
@@ -34,12 +42,24 @@ Just add `include/` to your project. No dependencies except C++17 STL and the bu
 > [!CAUTION]
 > If you're compiling on Windows, make sure your compiler supports at least C++17. See [CI status](https://github.com/mbn-code/cLog/actions) for tested environments.
 
+## Benchmarks
+
+The following graph shows the average time (in microseconds) to log a single entry under different modes and sinks (lower is better):
+
+<p align="center">
+  <img src="./benchmarks/benchmark.png" alt="cLog benchmarks bar graph" width="500">
+</p>
+
+_Benchmark run on a modern Linux machine (100,000 logs per variant, see `benchmarks/benchmark_logger.cpp`)._
+
+---
+
 ## Features
 - Async and sync modes (`Logger::Mode`)
 - Safe, automatic background flushing and shutdown
 - Console and file sinks out of the box
 - Fully structured JSON logs
-- Clean, chainable API: `info().kv().kv()`
+- Clean, chainable API: `info().kv().kv()`, now with `debug()`, `warn()`, `error()` and all levels
 - Lossless, race-free, and cross-platform
 
 > [!TIP]
@@ -75,7 +95,7 @@ log.add_sink(std::make_unique<MySink>());
 - [x] CI/test coverage (Linux/Ubuntu)
 - [ ] More flexible external sink/plugin system
 - [ ] Windows and Mac CI
-- [ ] Simple config file support
+- [x] Simple config file support (JSON, see examples/logger.json, logger_config.hpp)
 
 ## License
 MIT - see [LICENSE](LICENSE)
