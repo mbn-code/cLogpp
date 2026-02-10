@@ -1,5 +1,5 @@
-#include "../include/logger.hpp"
-#include "../include/file_sink.hpp"
+#include "logger.hpp"
+#include "file_sink.hpp"
 #include <fstream>
 #include <cassert>
 

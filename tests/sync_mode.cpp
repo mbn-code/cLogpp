@@ -1,4 +1,4 @@
-#include "../include/logger.hpp"
+#include "logger.hpp"
 #include <sstream>
 #include <cassert>
 

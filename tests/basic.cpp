@@ -1,4 +1,4 @@
-#include "../include/logger.hpp"
+#include "logger.hpp"
 #include <cassert>
 int main() {
     c_log::Logger log;
