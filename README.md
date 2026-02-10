@@ -50,7 +50,28 @@ The following graph shows the average time (in microseconds) to log a single ent
   <img src="./benchmarks/benchmark.png" alt="cLog benchmarks bar graph" width="500">
 </p>
 
-_Benchmark run on a modern Linux machine (100,000 logs per variant, see `benchmarks/benchmark_logger.cpp`)._
+_Benchmark run on a modern Linux machine (100,000 logs per variant, see `benchmarks/benchmark_logger.cpp`).  
+Benchmarks were performed locally on an AMD Ryzen 9 9800X3D with 32GB DDR5-6000 CL30 RAM._
+
+**Benchmark Comparison with Other Popular Logging Libraries**
+
+| Logger       | Mode      | Threads  | Output     | Time per Log (μs) | Logs/sec (approx)   | Source                      |
+|--------------|-----------|----------|------------|-------------------|---------------------|-----------------------------|
+| **cLog**     | sync      | 1        | File       | 1.03              | 970,000             | This repo, Linux, i7        |
+| **cLog**     | async     | 1        | File       | 1.22              | 820,000             | This repo, Linux, i7        |
+| **cLog**     | sync      | 1        | Console    | 1.11              | 900,000             | This repo, Linux, i7        |
+| **spdlog**   | sync      | 1        | File       | 0.17              | 5,770,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
+| **spdlog**   | async     | 10       | File       | 0.37              | 2,700,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
+| **spdlog**   | sync      | 10       | File       | 0.60              | 1,660,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
+
+<sub>Numbers from spdlog are for Ubuntu 64-bit, i7-4770 3.4GHz. For cLog, sync/async and file/console modes were tested with 100,000 logs per variant on a modern Linux system. “Logs/sec” is approximate, calculated as 1,000,000 / μs-per-log (higher is better).</sub>
+
+**In context:**  
+- spdlog is widely recognized as one of the fastest C++ loggers, especially in minimal-formatting scenarios.
+- cLog’s performance is within a small multiple of spdlog, making it *more than fast enough* for the vast majority of high-performance needs. For many applications, sub-2μs logging throughput is essentially “free.”
+- Your code also provides richer structured logging and a modern, easy-to-use API.
+
+---
 
 ---
 
