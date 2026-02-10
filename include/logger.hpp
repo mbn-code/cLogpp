@@ -9,7 +9,7 @@
 #include <atomic>
 #include <mutex>
 #include <thread>
-#include <queue>
+#include "spsc_ring_buffer.hpp"
 #include <condition_variable>
 #include <cstdio>
 #include <utility>
@@ -110,7 +110,7 @@ private:
     Level min_level_;
     Mode mode_;
     // Async machinery
-    std::queue<Entry> queue_;
+    SPSCRingBuffer<Entry> queue_{1024}; // Pre-allocate space for 1024 entries
     std::mutex mutex_;
     std::condition_variable cv_;
     std::thread worker_;
@@ -147,28 +147,31 @@ private:
         worker_ = std::thread([this] { run_async(); });
     }
     void run_async() {
-    while (true) {
-        Entry entry;
-        {
-            std::unique_lock<std::mutex> lk(mutex_);
-            cv_.wait(lk, [&] { return stop_ || !queue_.empty(); });
-            if (queue_.empty()) {
-                if (stop_) {
-                    break;
-                } else {
-                    continue;
+        while (true) {
+            Entry entry;
+            std::optional<Entry> result;
+            {
+                std::unique_lock<std::mutex> lk(mutex_);
+                cv_.wait(lk, [&] {
+                    result = queue_.pop();
+                    return stop_ || result.has_value();
+                });
+                if (!result.has_value()) {
+                    if (stop_) {
+                        break;
+                    } else {
+                        continue;
+                    }
                 }
+                entry = std::move(result.value());
             }
-            entry = std::move(queue_.front());
-            queue_.pop();
+            emit_entry(entry);
+            // After emitting, if stop_ and queue is empty, exit
+            std::unique_lock<std::mutex> lk(mutex_);
+            if (stop_ && !queue_.pop().has_value()) {
+                break;
+            }
         }
-        emit_entry(entry);
-        // After emitting, if stop_ and queue is empty, exit
-        std::unique_lock<std::mutex> lk(mutex_);
-        if (stop_ && queue_.empty()) {
-            break;
-        }
-    }
 }
 };
 

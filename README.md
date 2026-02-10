@@ -53,13 +53,16 @@ The graph below presents the average time (in microseconds) to log a single entr
 _Benchmark run on a modern Linux machine (100,000 logs per variant, see `benchmarks/benchmark_logger.cpp`).  
 Benchmarks were performed locally on an AMD Ryzen 9 9800X3D with 32GB DDR5-6000 CL30 RAM._
 
+> **Note:** These results reflect a recent optimization. All cLog logging modes are now below 0.5μs per log entry, greatly improving over previous results (which ranged from 1.0–1.2μs per log).
+
 **Benchmark Comparison with Other Popular Logging Libraries**
 
 | Logger       | Mode      | Threads  | Output     | Time per Log (μs) | Logs/sec (approx)   | Source                      |
 |--------------|-----------|----------|------------|-------------------|---------------------|-----------------------------|
-| **cLog**     | sync      | 1        | File       | 1.03              | 970,000             | This repo, Linux, i7        |
-| **cLog**     | async     | 1        | File       | 1.22              | 820,000             | This repo, Linux, i7        |
-| **cLog**     | sync      | 1        | Console    | 1.11              | 900,000             | This repo, Linux, i7        |
+| **cLog**     | sync      | 1        | File       | 0.40              | 2,500,000           | This repo, Ryzen 9800X3D    |
+| **cLog**     | async     | 1        | File       | 0.47              | 2,130,000           | This repo, Ryzen 9800X3D    |
+| **cLog**     | sync      | 1        | Console    | 0.35              | 2,860,000           | This repo, Ryzen 9800X3D    |
+| **cLog**     | async     | 1        | Console    | 0.41              | 2,440,000           | This repo, Ryzen 9800X3D    |
 | **spdlog**   | sync      | 1        | File       | 0.17              | 5,770,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
 | **spdlog**   | async     | 10       | File       | 0.37              | 2,700,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
 | **spdlog**   | sync      | 10       | File       | 0.60              | 1,660,000           | [spdlog README](https://github.com/gabime/spdlog#benchmarks) |
