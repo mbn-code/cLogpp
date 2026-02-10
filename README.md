@@ -13,7 +13,7 @@
 
 ---
 
-## ⭐️ Getting Started
+## Getting Started
 
 ```cpp
 #include "include/logger.hpp"
@@ -43,7 +43,7 @@ Just add `include/` to your project. No dependencies outside C++17 STL and bundl
 
 ## Issues and Contributing
 - Please [open an Issue](https://github.com/mbn-code/cLog/issues) for bugs, features, or questions!
-- Star the repo if you find it useful ⭐
+- Star the repo if you find it useful
 - [Contributing Guide](CONTRIBUTING.md)
 
 ---

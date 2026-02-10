@@ -121,14 +121,17 @@ private:
         worker_ = std::thread([this] { run_async(); });
     }
     void run_async() {
-    for (;;) {
+    while (true) {
         Entry entry;
         {
             std::unique_lock<std::mutex> lk(mutex_);
             cv_.wait(lk, [&] { return stop_ || !queue_.empty(); });
             if (queue_.empty()) {
-                if (stop_) break;
-                else continue;
+                if (stop_) {
+                    break;
+                } else {
+                    continue;
+                }
             }
             entry = std::move(queue_.front());
             queue_.pop();
@@ -136,7 +139,9 @@ private:
         emit_entry(entry);
         // After emitting, if stop_ and queue is empty, exit
         std::unique_lock<std::mutex> lk(mutex_);
-        if (stop_ && queue_.empty()) break;
+        if (stop_ && queue_.empty()) {
+            break;
+        }
     }
 }
 };
