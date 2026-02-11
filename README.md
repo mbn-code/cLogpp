@@ -13,7 +13,7 @@
 
 ---
 
-## 🚀 Why cLog++?
+## Why cLog++?
 
 - **Zero Dependencies:** No `nlohmann/json`, no Boost, no external build systems. Just drop `include/` into your project.
 - **Blazing Fast:** Custom zero-allocation JSON serializer achieves **sub-microsecond** latency (see [Benchmarks](#-benchmarks)).
@@ -23,7 +23,7 @@
 
 ---
 
-## 📦 Quick Start
+## Quick Start
 
 ### 1. Integration
 Simply copy the `include/` directory to your project.
@@ -63,7 +63,7 @@ g++ -std=c++17 -O3 -I./include main.cpp -o app -pthread
 
 ---
 
-## 📊 Benchmarks
+## Benchmarks
 
 **cLog++ is fast.** We benchmarked it against popular alternatives on modern hardware (MacBook Pro M1 Pro).
 
@@ -78,7 +78,7 @@ g++ -std=c++17 -O3 -I./include main.cpp -o app -pthread
 
 ---
 
-## ✨ Features
+## Features
 
 - **Asynchronous & Synchronous:** Toggle modes easily with `Logger::Mode`.
 - **Safe Lifecycle:** Automatic background thread management and lossless shutdown.
@@ -91,7 +91,7 @@ g++ -std=c++17 -O3 -I./include main.cpp -o app -pthread
 
 ---
 
-## 🛠️ Advanced Usage
+## Advanced Usage
 
 <details>
 <summary><strong>Custom Output (Sinks)</strong></summary>
@@ -124,7 +124,7 @@ log.info("system.heartbeat");  // Ignored
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! Whether it's reporting a bug, suggesting a feature, or writing code.
 
@@ -142,13 +142,13 @@ We welcome contributions! Whether it's reporting a bug, suggesting a feature, or
 
 ---
 
-## 📄 License
+## License
 
 MIT © [cLog++ Contributors](LICENSE).
 
 ---
 
-> If you find cLog++ useful, please **[star the repository](https://github.com/mbn-code/cLogpp)**! It helps the project grow. ⭐
+> If you find cLog++ useful, please consider starring the repository on GitHub! It helps the project grow.
 
 <details>
 <summary><strong>Note on AI Involvement</strong></summary>

@@ -8,7 +8,7 @@ Thank you for your interest in contributing!
 3. **Write clear code** and **add tests** for any new behavior.
 4. **Run all tests** (`g++ -std=c++17 -pthread -Iinclude tests/*.cpp && ./...`) before submitting.
 5. **Open a pull request** (PR) with a clear, descriptive title and summary.
-6. **Participate in code review**—be responsive, constructive, and open!
+6. **Participate in code review. Please be responsive, constructive, and open!**
 
 ## Reporting Issues
 - Search for existing issues first.

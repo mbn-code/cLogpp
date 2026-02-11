@@ -8,7 +8,7 @@
 - Modern, minimal, single-header main implementation.
 
 ### Fixed
-- Thread shutdown is lossless—background logging thread fully drains before logger destruction.
+- Thread shutdown is now completely lossless. The background logging thread always fully drains before the logger is destroyed.
 
 ---
 All changes will be documented in this file.
