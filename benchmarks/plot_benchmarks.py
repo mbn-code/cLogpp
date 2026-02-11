@@ -29,7 +29,7 @@ bar = sns.barplot(
 )
 plt.xlabel("Time per log entry (μs)")
 plt.ylabel("")
-plt.title("cLog Benchmark Results (lower is better)")
+plt.title("cLog++ Benchmark Results (lower is better)")
 plt.tight_layout()
 
 for container in bar.containers:

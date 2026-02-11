@@ -19,34 +19,34 @@ double run_bench(const char* label, Fn fn) {
 }
 
 int main() {
-    std::ofstream file("bench_cLog_file.txt");
+    std::ofstream file("bench_cLogpp_file.txt");
     std::cout << "logger,sink,mode,usec_per_log\n";
 
     // async file
-    run_bench("cLog,file,async", [&]() {
+    run_bench("cLog++,file,async", [&]() {
         c_log::Logger log(c_log::Logger::Mode::Async);
-        log.add_sink(std::make_unique<c_log::FileSink>("./bench_cLog_file.txt"));
+        log.add_sink(std::make_unique<c_log::FileSink>("./bench_cLogpp_file.txt"));
         for (int i = 0; i < N; ++i)
             log.info("bench").kv("i", i);
     });
 
     // sync file
-    run_bench("cLog,file,sync", [&]() {
+    run_bench("cLog++,file,sync", [&]() {
         c_log::Logger log(c_log::Logger::Mode::Sync);
-        log.add_sink(std::make_unique<c_log::FileSink>("./bench_cLog_file.txt"));
+        log.add_sink(std::make_unique<c_log::FileSink>("./bench_cLogpp_file.txt"));
         for (int i = 0; i < N; ++i)
             log.info("bench").kv("i", i);
     });
 
     // async console
-    run_bench("cLog,console,async", [&]() {
+    run_bench("cLog++,console,async", [&]() {
         c_log::Logger log(c_log::Logger::Mode::Async);
         for (int i = 0; i < N; ++i)
             log.info("bench").kv("i", i);
     });
 
     // sync console
-    run_bench("cLog,console,sync", [&]() {
+    run_bench("cLog++,console,sync", [&]() {
         c_log::Logger log(c_log::Logger::Mode::Sync);
         for (int i = 0; i < N; ++i)
             log.info("bench").kv("i", i);

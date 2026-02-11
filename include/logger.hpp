@@ -1,7 +1,7 @@
 #pragma once
-// Modern C++ Structured Logging Library (cLog core)
+// Modern C++ Structured Logging Library (cLog++)
 // Async by default, chainable API, zero macros, extensible sinks, structured JSON output
-// Author: cLog contributors    License: MIT
+// Author: cLog++ contributors    License: MIT
 
 #include <memory>
 #include <string>

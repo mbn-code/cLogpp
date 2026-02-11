@@ -6,7 +6,7 @@
 #include <cassert>
 
 // Lock-Free Single-Producer-Single-Consumer (SPSC) Ring Buffer
-// Author: cLog contributors
+// Author: cLog++ contributors
 
 namespace c_log {
 

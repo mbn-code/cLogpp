@@ -1,4 +1,4 @@
-# Contributing to cLog
+# Contributing to cLog++
 
 Thank you for your interest in contributing!
 
