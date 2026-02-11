@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <optional>
 #include <atomic>
 #include <mutex>
 #include <thread>
@@ -15,10 +16,9 @@
 #include <utility>
 #include <cstdint>
 #include <chrono>
+#include <sstream>
+#include <iomanip>
 
-#include "logger_internal_json.hpp"
-
-namespace nlohmann {} // ensure the namespace is declared for vendored json
 namespace c_log {
 
 // Log levels (compile-time support possible)
@@ -118,12 +118,47 @@ private:
     bool worker_started_;
     Entry cur_entry_{};
 
+    static void escape_json_string(const std::string& input, std::string& output) {
+        for (auto c : input) {
+            switch (c) {
+                case '"': output += "\\\""; break;
+                case '\\': output += "\\\\"; break;
+                case '\b': output += "\\b"; break;
+                case '\f': output += "\\f"; break;
+                case '\n': output += "\\n"; break;
+                case '\r': output += "\\r"; break;
+                case '\t': output += "\\t"; break;
+                default:
+                    if (static_cast<unsigned char>(c) < 0x20) {
+                        char buf[7];
+                        std::snprintf(buf, sizeof(buf), "\\u%04x", c);
+                        output += buf;
+                    } else {
+                        output += c;
+                    }
+            }
+        }
+    }
+
     void emit_entry(const Entry& entry) {
-        // Convert to JSON
-        nlohmann::json j;
-        j["event"] = entry.event;
-        for (const auto& kv : entry.fields) j[kv.first] = kv.second;
-        std::string line = j.dump();
+        std::string line;
+        // Pre-allocate to reduce reallocations. 
+        // Heuristic: event + overhead + fields * (key+val+overhead)
+        line.reserve(64 + entry.event.size() + entry.fields.size() * 32); 
+
+        line += "{\"event\":\"";
+        escape_json_string(entry.event, line);
+        line += "\"";
+
+        for (const auto& kv : entry.fields) {
+            line += ",\"";
+            escape_json_string(kv.first, line);
+            line += "\":\"";
+            escape_json_string(kv.second, line);
+            line += "\"";
+        }
+        line += "}";
+
         for (const auto& s : sinks_) s->log(line);
     }
     void flush_if_building() {
