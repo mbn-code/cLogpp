@@ -2,7 +2,7 @@
 #include <memory>
 
 int main() {
-    // Default async logger to stdout
+    // Default async logger; the built-in console sink writes to stderr.
     c_log::Logger log;
     log.info("app.start").kv("version", "0.1");
     

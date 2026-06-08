@@ -5,17 +5,23 @@
 #include <optional>
 #include <cassert>
 
-// Lock-Free Single-Producer-Single-Consumer (SPSC) Ring Buffer
+// Single-Producer-Single-Consumer (SPSC) ring buffer.
+//
+// As a standalone primitive this is lock-free: one producer thread calling
+// push() and one consumer thread calling pop() need no mutex. The Logger,
+// however, may have many producer threads (any thread that logs), so it wraps
+// this buffer in a mutex to make it multi-producer-safe. See logger.hpp.
+//
 // Author: cLog++ contributors
 
 namespace c_log {
 
-// Generic Ring Buffer for SPSC context 
+// Generic Ring Buffer for SPSC context
 template<typename T>
 class SPSCRingBuffer {
 public:
     explicit SPSCRingBuffer(size_t capacity) : capacity_(capacity), buffer_(capacity), head_(0), tail_(0) {
-        assert(capacity > 0 && "Capacity must be greater than zero");
+        assert(capacity > 1 && "Capacity must be greater than one (one slot is reserved to tell full from empty)");
     }
 
     // Produces an element. Returns true if successful, false if the buffer is full.
@@ -45,6 +51,13 @@ public:
         T item = buffer_[tail];
         tail_.store((tail + 1) % capacity_, std::memory_order_release);
         return item;
+    }
+
+    // True if there is nothing to consume. (Indices are reduced modulo
+    // capacity_ on every step, so they always stay in [0, capacity_) and
+    // can never overflow.)
+    bool empty() const {
+        return head_.load(std::memory_order_acquire) == tail_.load(std::memory_order_acquire);
     }
 
 private:

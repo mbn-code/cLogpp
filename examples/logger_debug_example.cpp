@@ -3,6 +3,7 @@
 
 int main() {
     c_log::Logger log(c_log::Logger::Mode::Sync);
+    log.set_level(c_log::Level::Trace); // show trace/debug (default minimum is Info)
     log.debug("debug.tst").kv("what", "testing");
     c_log::debug_log("This only prints in debug mode");
     log.trace("a.trace").kv("data", 1);
