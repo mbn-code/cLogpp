@@ -20,7 +20,7 @@ Examples of unacceptable behavior include:
 Project maintainers are responsible for clarifying standards and will take corrective action where needed.
 
 ## Enforcement
-Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening an Issue or emailing the maintainer listed in the README. All complaints will be reviewed and investigated and results communicated back.
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by opening an issue or contacting the project maintainers privately through GitHub. All complaints will be reviewed and investigated and results communicated back.
 
 ## Attribution
 This Code of Conduct is adapted from the Contributor Covenant, version 2.1: https://www.contributor-covenant.org/version/2/1/code_of_conduct.html
