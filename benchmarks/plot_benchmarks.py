@@ -1,39 +1,41 @@
-import pandas as pd
+#!/usr/bin/env python3
+"""Plot cLog++ benchmark results.
+
+Reads benchmark_results.csv (produced by benchmark_logger) and writes
+benchmark.png. Only depends on matplotlib + the standard library.
+
+Usage:
+    ./benchmark_logger            # writes benchmark_results.csv
+    python plot_benchmarks.py     # writes benchmark.png
+"""
+import csv
+import sys
+
+import matplotlib
+matplotlib.use("Agg")  # headless / CI safe
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-# Read the CSV file
-df = pd.read_csv("benchmark_results.csv")
+CSV_PATH = sys.argv[1] if len(sys.argv) > 1 else "benchmark_results.csv"
 
-# Remove noop for cleaner graph
-plot_df = df[df["logger"] != "noop"]
+labels, values = [], []
+with open(CSV_PATH, newline="") as f:
+    for row in csv.DictReader(f):
+        if row["logger"] == "noop":  # baseline, not a logging mode
+            continue
+        labels.append(f'{row["logger"]} [{row["sink"]}, {row["mode"]}]')
+        values.append(float(row["usec_per_log"]))
 
-# Compose readable labels
-plot_df["Label"] = (
-    plot_df["logger"] + " [" + plot_df["sink"] + ", " + plot_df["mode"] + "]"
-)
-
-# Sort by performance (ascending)
-plot_df = plot_df.sort_values("usec_per_log")
-
-# Set style
-sns.set_theme(style="whitegrid")
+# Sort fastest first.
+order = sorted(range(len(values)), key=lambda i: values[i])
+labels = [labels[i] for i in order]
+values = [values[i] for i in order]
 
 plt.figure(figsize=(8, 4))
-bar = sns.barplot(
-    data=plot_df,
-    y="Label",
-    x="usec_per_log",
-    palette="Blues_d",
-    edgecolor="k",
-)
-plt.xlabel("Time per log entry (μs)")
-plt.ylabel("")
-plt.title("cLog++ Benchmark Results (lower is better)")
+bars = plt.barh(labels, values, color="#3b7dd8", edgecolor="black")
+plt.bar_label(bars, fmt="%.3f")
+plt.xlabel("Time per log entry (microseconds, lower is better)")
+plt.title("cLog++ benchmark results")
+plt.gca().invert_yaxis()
 plt.tight_layout()
-
-for container in bar.containers:
-    bar.bar_label(container, fmt="%.2f")
-
-plt.savefig("benchmark.png")
+plt.savefig("benchmark.png", dpi=120)
 print("Graph saved to benchmark.png")
