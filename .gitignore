@@ -29,3 +29,12 @@ cmake-build*/
 .turd*
 __pycache__/
 .env
+
+# Benchmark artifacts
+benchmark_results.csv
+bench_cLogpp_file.txt
+
+# Locally-built binaries dropped next to sources (CMake builds go in build/).
+# Keep the sources; ignore everything else that lands in tests/.
+tests/*
+!tests/*.cpp

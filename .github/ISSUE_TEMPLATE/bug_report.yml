@@ -1,34 +1,37 @@
-name: Bug report
-about: Create a bug report to help us improve
-labels: bug
+name: Bug report
+description: Report a problem so we can fix it
+labels: [bug]
 body:
-  - type: input
+  - type: textarea
+    id: what-happened
     attributes:
       label: What happened?
-      description: Describe the bug in detail.
+      description: Describe the bug clearly.
     validations:
       required: true
-  - type: input
+  - type: textarea
+    id: repro
     attributes:
       label: Steps to reproduce
-      description: Include code, platform, and reproduction steps.
+      description: Include a minimal code sample, the compile/run command, and what you observed.
       placeholder: |
         1. Code sample
-        2. Compile/run this way
-        3. Observe...
+        2. Compile/run command
+        3. Observed vs. expected
     validations:
       required: true
   - type: input
+    id: expected
     attributes:
       label: Expected behavior
       description: What should have happened?
-      placeholder: Clear statement of correct behavior...
-      validations:
-        required: true
+    validations:
+      required: true
   - type: textarea
+    id: environment
     attributes:
-      label: System details
-      description: OS, compiler, and library versions
-      placeholder: Ubuntu 22.04, g++ v10, ...
+      label: Environment
+      description: OS, compiler and version, C++ standard, and cLog++ version/commit.
+      placeholder: "Ubuntu 22.04, g++ 12, -std=c++17, cLog++ @ <commit>"
     validations:
       required: false

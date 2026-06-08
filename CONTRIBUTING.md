@@ -6,7 +6,13 @@ Thank you for your interest in contributing!
 1. **Fork the repository** and clone it locally.
 2. **Create a new branch** for each feature or fix.
 3. **Write clear code** and **add tests** for any new behavior.
-4. **Run all tests** (`g++ -std=c++17 -pthread -Iinclude tests/*.cpp && ./...`) before submitting.
+4. **Build and run the tests** before submitting:
+   ```bash
+   cmake -S . -B build
+   cmake --build build
+   ctest --test-dir build --output-on-failure
+   ```
+   To compile a single test directly: `g++ -std=c++17 -pthread -Iinclude tests/levels.cpp -o levels && ./levels`
 5. **Open a pull request** (PR) with a clear, descriptive title and summary.
 6. **Participate in code review. Please be responsive, constructive, and open!**
 
