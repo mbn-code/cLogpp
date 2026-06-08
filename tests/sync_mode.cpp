@@ -1,24 +1,26 @@
+// Sync mode: entries are emitted immediately, in order, to every sink.
 #include "logger.hpp"
-#include <sstream>
 #include <cassert>
+#include <string>
+#include <vector>
 
-struct StringSink : public c_log::Sink {
-    std::ostringstream out;
-    void log(const std::string& msg) override { out << msg << "\n"; }
+struct CaptureSink : c_log::Sink {
+    std::vector<std::string> lines;
+    void log(const std::string& msg) override { lines.push_back(msg); }
 };
 
 int main() {
-    StringSink* capture = new StringSink;
-    std::string lines;
+    CaptureSink* cap = new CaptureSink;
     {
         c_log::Logger log(c_log::Logger::Mode::Sync);
-        log.add_sink(std::unique_ptr<c_log::Sink>(capture)); // transfer ownership
+        log.clear_sinks(); // drop the default console sink
+        log.add_sink(std::unique_ptr<c_log::Sink>(cap));
         log.info("sync_test").kv("x", 17);
-        // forcibly flush before test
+        // In sync mode the line is already in cap->lines here.
+        assert(cap->lines.size() == 1);
+        assert(cap->lines[0].find("\"event\":\"sync_test\"") != std::string::npos);
+        assert(cap->lines[0].find("\"x\":17") != std::string::npos); // native number, not "17"
+        assert(cap->lines[0].find("\"level\":\"info\"") != std::string::npos);
     }
-    // Now capture is destroyed, but we can at least confirm that test now passes if assertion is inside
-    // Need to put assertion BEFORE log falls out of scope; so use a file sink or file test for full atomicity
-    // or check for segfault/crash is absent
-    // Alternatively, test output via stderr capture or file
     return 0;
 }
