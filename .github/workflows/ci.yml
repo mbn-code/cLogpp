@@ -47,7 +47,8 @@ jobs:
         run: |
           set -e
           for ex in build/example_* build/Release/example_*; do
-            [ -x "$ex" ] || continue
+            # -f: MSVC leaves example_*.dir intermediate directories, which pass -x.
+            [ -f "$ex" ] && [ -x "$ex" ] || continue
             case "$ex" in *.pdb|*.ilk) continue;; esac
             echo "== $ex"; "$ex"
           done
