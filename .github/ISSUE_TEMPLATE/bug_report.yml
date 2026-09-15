@@ -32,6 +32,6 @@ body:
     attributes:
       label: Environment
       description: OS, compiler and version, C++ standard, and cLog++ version/commit.
-      placeholder: "Ubuntu 22.04, g++ 12, -std=c++17, cLog++ @ <commit>"
+      placeholder: "Ubuntu 24.04, g++ 13, -std=c++17, cLog++ 0.3.0 (or commit)"
     validations:
       required: false

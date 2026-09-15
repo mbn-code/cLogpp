@@ -1,0 +1,56 @@
+name: Release
+
+# Pushing a tag such as v0.3.0 builds and tests the library, generates the
+# single-header distribution, and publishes a GitHub release whose notes are
+# the matching CHANGELOG section.
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Publish ${{ github.ref_name }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Check the tag matches the version in core.hpp and CMakeLists.txt
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          hdr=$(sed -n 's/.*CLOGPP_VERSION_STRING "\([^"]*\)".*/\1/p' include/clogpp/core.hpp)
+          cm=$(sed -n 's/.*project(cLogpp LANGUAGES CXX VERSION \([0-9.]*\).*/\1/p' CMakeLists.txt)
+          echo "tag=$tag header=$hdr cmake=$cm"
+          [ "$tag" = "$hdr" ] && [ "$tag" = "$cm" ]
+
+      - name: Build and test
+        run: |
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCLOGPP_WARNINGS_AS_ERRORS=ON
+          cmake --build build --parallel
+          ctest --test-dir build --output-on-failure --parallel 4
+
+      - name: Generate single header
+        run: python3 tools/amalgamate.py clogpp_single.hpp
+
+      - name: Extract release notes from CHANGELOG.md
+        run: |
+          awk -v ver="${GITHUB_REF_NAME}" '
+            /^## \[/ { if (found) exit; if (index($0, "[" ver "]")) { found = 1; next } }
+            found { print }
+          ' CHANGELOG.md > notes.md
+          if [ ! -s notes.md ]; then
+            echo "No CHANGELOG section for ${GITHUB_REF_NAME}" >&2; exit 1
+          fi
+          cat notes.md
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            --title "cLog++ ${GITHUB_REF_NAME}" \
+            --notes-file notes.md \
+            clogpp_single.hpp
