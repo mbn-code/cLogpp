@@ -2,26 +2,140 @@ name: CI
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
   pull_request:
-    branches: [ main, master ]
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-test:
-    name: ${{ matrix.os }}
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-latest, macos-latest, windows-latest ]
+        include:
+          - { name: "Linux GCC", os: ubuntu-latest, cc: gcc, cxx: g++ }
+          - { name: "Linux Clang", os: ubuntu-latest, cc: clang, cxx: clang++ }
+          - { name: "macOS Clang", os: macos-latest, cc: clang, cxx: clang++ }
+          - { name: "Windows MSVC", os: windows-latest, cc: "", cxx: "" }
+    env:
+      CC: ${{ matrix.cc }}
+      CXX: ${{ matrix.cxx }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
       - name: Configure
-        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCLOGPP_BUILD_BENCHMARKS=ON
+        run: >
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+          -DCLOGPP_BUILD_BENCHMARKS=ON -DCLOGPP_WARNINGS_AS_ERRORS=ON
 
       - name: Build (library, tests, examples, benchmark)
-        run: cmake --build build --config Release
+        run: cmake --build build --config Release --parallel
 
       - name: Test
-        run: ctest --test-dir build --build-config Release --output-on-failure
+        run: ctest --test-dir build --build-config Release --output-on-failure --parallel 4
+
+      - name: Run examples
+        shell: bash
+        run: |
+          set -e
+          for ex in build/example_* build/Release/example_*; do
+            [ -x "$ex" ] || continue
+            case "$ex" in *.pdb|*.ilk) continue;; esac
+            echo "== $ex"; "$ex"
+          done
+
+      - name: Benchmark smoke run
+        shell: bash
+        run: |
+          bin=build/benchmark_logger; [ -x "$bin" ] || bin=build/Release/benchmark_logger.exe
+          "$bin" --quick
+
+  sanitizers:
+    name: ${{ matrix.name }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - {
+              name: "ASan + UBSan (GCC)",
+              cxx: g++,
+              sanitize: "address,undefined",
+            }
+          - { name: "TSan (Clang)", cxx: clang++, sanitize: "thread" }
+    env:
+      CXX: ${{ matrix.cxx }}
+      ASAN_OPTIONS: detect_leaks=1:strict_string_checks=1
+      UBSAN_OPTIONS: print_stacktrace=1:halt_on_error=1
+      TSAN_OPTIONS: halt_on_error=1
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Configure
+        run: >
+          cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
+          -DCLOGPP_WARNINGS_AS_ERRORS=ON -DCLOGPP_SANITIZE=${{ matrix.sanitize }}
+      - name: Build
+        run: cmake --build build --parallel
+      - name: Test
+        run: ctest --test-dir build --output-on-failure --parallel 2
+
+  install-and-consume:
+    name: Install + find_package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Install to a prefix
+        run: |
+          cmake -S . -B build -DCLOGPP_BUILD_TESTS=OFF -DCLOGPP_BUILD_EXAMPLES=OFF
+          cmake --install build --prefix "$PWD/prefix"
+      - name: Build a consumer project against the installed package
+        run: |
+          mkdir consumer && cd consumer
+          cat > CMakeLists.txt <<'EOF'
+          cmake_minimum_required(VERSION 3.14)
+          project(consumer CXX)
+          find_package(clogpp 0.3 REQUIRED)
+          add_executable(app main.cpp)
+          target_link_libraries(app PRIVATE clogpp::clogpp)
+          EOF
+          cat > main.cpp <<'EOF'
+          #include <clogpp/clogpp.hpp>
+          int main() { c_log::Logger log; log.info("consumer.ok").kv("v", c_log::version()); }
+          EOF
+          cmake -S . -B build -DCMAKE_PREFIX_PATH="$GITHUB_WORKSPACE/prefix"
+          cmake --build build
+          ./build/app
+
+  single-header:
+    name: Single-header amalgamation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Generate and compile clogpp_single.hpp
+        run: |
+          python3 tools/amalgamate.py clogpp_single.hpp
+          cat > single.cpp <<'EOF'
+          #include "clogpp_single.hpp"
+          int main() { c_log::Logger log(c_log::Logger::Mode::Sync); log.info("single.ok"); }
+          EOF
+          g++ -std=c++17 -Wall -Wextra -Wpedantic -Werror single.cpp -o single -pthread
+          ./single
+
+  format:
+    name: clang-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Check formatting
+        run: |
+          clang-format --version
+          files=$(git ls-files '*.hpp' '*.cpp')
+          clang-format --dry-run --Werror $files
