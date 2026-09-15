@@ -38,6 +38,7 @@ bench_cLogpp_file.txt
 # Keep the sources; ignore everything else that lands in tests/.
 tests/*
 !tests/*.cpp
+!tests/*.hpp
 
 # CMake build trees used during development
 build-*/
