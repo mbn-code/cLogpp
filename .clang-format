@@ -1,0 +1,25 @@
+# cLog++ code style. Run `clang-format -i` on changed files before committing;
+# CI checks that the tree is formatted.
+BasedOnStyle: Google
+Standard: c++17
+IndentWidth: 4
+ColumnLimit: 100
+AccessModifierOffset: -4
+DerivePointerAlignment: false
+PointerAlignment: Left
+NamespaceIndentation: None
+FixNamespaceComments: true
+IndentCaseLabels: true
+IndentPPDirectives: AfterHash
+AllowShortFunctionsOnASingleLine: All
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+AllowShortBlocksOnASingleLine: Always
+AlignTrailingComments: true
+AlignConsecutiveMacros: true
+BinPackArguments: true
+BinPackParameters: true
+SortIncludes: CaseSensitive
+IncludeBlocks: Preserve
+SpacesBeforeTrailingComments: 2
